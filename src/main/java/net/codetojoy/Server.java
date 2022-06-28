@@ -38,7 +38,8 @@ public class Server {
 
     // prize_card=10&max_card=12&mode=max&cards=4&cards=6&cards=2
     private static void handleWaro(HttpExchange exchange) throws IOException {
-        String response = "Hi from waro!";
+        var params = getParams(exchange);
+        var response = new StrategyService().apply(params);
         sendResponse(response, exchange);
     }
 
