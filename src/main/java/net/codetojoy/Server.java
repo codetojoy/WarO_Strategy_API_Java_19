@@ -41,15 +41,27 @@ public class Server {
         }
     }
 
-    private static void handleEcho(HttpExchange exchange) throws IOException {
+    private static List<String> getParams(HttpExchange exchange) throws IOException {
         var uri = exchange.getRequestURI();
         var query = uri.getQuery();   
         System.out.println("TRACER query: " + query);
 
+        var params = new ArrayList<String>();
         var tokens = query.split("&");
-        var response = new StringBuilder();
+
         for (var token : tokens) {
-            var pair = token.split("=");
+            params.add(token);
+        }
+
+        return params;
+    }
+
+    private static void handleEcho(HttpExchange exchange) throws IOException {
+        var params = getParams(exchange);
+
+        var response = new StringBuilder();
+        for (var param : params) {
+            var pair = param.split("=");
             var key = pair[0].trim();
             var value = pair[1].trim();
             response.append(" " + key + " : " + value + " , ");
