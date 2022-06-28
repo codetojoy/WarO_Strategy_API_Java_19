@@ -3,6 +3,7 @@
 package net.codetojoy;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 // Q: no tests?
 // A: i will probably regret it but this http layer is meant to be quick & dirty. 
@@ -14,6 +15,8 @@ import java.util.*;
 //    just undifferentiated heavy-lifting.
 
 record Params(int prizeCard, int maxCard, String mode, List<Integer> cards) {}
+
+record Distance(Integer i, Integer distance) {}
 
 public class StrategyService {
     private static final String CARDS = "cards";
@@ -71,16 +74,28 @@ public class StrategyService {
         };
     }
 
+    IntStream intStream(List<Integer> cards) {
+        return cards.stream().flatMapToInt(IntStream::of);
+    }
+
     Integer maxCard(List<Integer> cards) {
-        return 5150;
+        var optional = intStream(cards).max();
+        return optional.getAsInt();
     }
+
     Integer minCard(List<Integer> cards) {
-        return 5150;
+        var optional = intStream(cards).min();
+        return optional.getAsInt();
     }
+
     Integer nearestCard(List<Integer> cards, Integer prizeCard) {
-        return 5150;
+        var distances = intStream(cards).mapToObj(i -> new Distance(i, Math.abs(i - prizeCard)));
+        var infoComparator = Comparator.comparing(Distance::distance);
+        var result = distances.min(infoComparator).get();
+        return result.i();
     }
+
     Integer nextCard(List<Integer> cards) {
-        return 5150;
+        return cards.get(0);
     }
 }
