@@ -7,6 +7,15 @@ import java.io.*;
 import java.util.*;
 import java.net.*;
 
+// Q: no tests?
+// A: i will probably regret it but this http layer is meant to be quick & dirty. 
+//    it may or may not be quick, but it is certainly dirty: achievement unlocked.
+//
+// Q: no framework?
+// A: it is hard to say what is currently supported for JDK 19, so I'm rolling my own for now 
+//    The real point here is to understand `sealed interface`/records in JDK 19, and this file is
+//    just undifferentiated heavy-lifting.
+
 public class Server {
     public static void main(String[] args) throws IOException {
         var port = 5151;
