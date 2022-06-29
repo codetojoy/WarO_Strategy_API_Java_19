@@ -17,6 +17,8 @@ import java.net.*;
 //    The real point here is to understand `sealed interface`/records in JDK 19, and this file is
 //    just undifferentiated heavy-lifting.
 
+record Param(String key, String value) {}
+
 public class Server {
     public static void main(String[] args) throws IOException {
         var port = 5151;
@@ -52,16 +54,18 @@ public class Server {
         }
     }
 
-    private static List<String> getParams(HttpExchange exchange) throws IOException {
+    private static List<Param> getParams(HttpExchange exchange) throws IOException {
         var uri = exchange.getRequestURI();
         var query = uri.getQuery();   
         System.out.println("TRACER query: " + query);
 
-        var params = new ArrayList<String>();
+        var params = new ArrayList<Param>();
         var tokens = query.split("&");
 
         for (var token : tokens) {
-            params.add(token);
+            var pair = token.split("=");
+            var param = new Param(pair[0], pair[1]);
+            params.add(param);
         }
 
         return params;
@@ -72,10 +76,7 @@ public class Server {
 
         var response = new StringBuilder();
         for (var param : params) {
-            var pair = param.split("=");
-            var key = pair[0].trim();
-            var value = pair[1].trim();
-            response.append(" " + key + " : " + value + " , ");
+            response.append(" " + param.key() + " : " + param.value() + " , ");
         }
         response.append("\n");
 
